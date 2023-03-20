@@ -12,6 +12,7 @@ const createComment = async (req, res, next) => {
 
 const getAllComments = async (req, res, next) => {
     let filter = {
+        // user_id: req.user._id,
         post_id: req.params.postId
     };
     const comments = await Comment.find(filter);
@@ -23,6 +24,7 @@ const getAllComments = async (req, res, next) => {
 
 const getSingleComment = async (req, res, next) => {
     let filter = {
+        // user_id: req.user._id,
         post_id: req.params.postId,
         _id: req.params.commentId
     };
@@ -35,6 +37,7 @@ const getSingleComment = async (req, res, next) => {
 
 const updateComment = async (req, res, next) => {
     let filter = {
+        // user_id: req.user._id,
         post_id: req.params.postId,
         _id: req.params.commentId
     };
@@ -47,6 +50,7 @@ const updateComment = async (req, res, next) => {
 
 const deleteComment = async (req, res, next) => {
     let filter = {
+        // user_id: req.user._id,
         post_id: req.params.postId,
         _id: req.params.commentId
     };
