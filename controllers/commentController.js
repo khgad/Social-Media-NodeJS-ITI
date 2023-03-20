@@ -2,7 +2,7 @@ const Comment = require('../models/commentModel');
 
 const createComment = async (req, res, next) => {
     const post_id = req.params.postId;
-    const newComment = new Comment({...req.body, post_id});
+    const newComment = new Comment({...req.body, post:post_id});
     await newComment.save();
     res.json({
         message: "New Comment has been created",
@@ -13,7 +13,7 @@ const createComment = async (req, res, next) => {
 const getAllComments = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId
+        post: req.params.postId
     };
     const comments = await Comment.find(filter);
     res.json({
@@ -25,7 +25,7 @@ const getAllComments = async (req, res, next) => {
 const getSingleComment = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId,
+        post: req.params.postId,
         _id: req.params.commentId
     };
     const selectedComment = await Comment.findOne(filter);
@@ -38,7 +38,7 @@ const getSingleComment = async (req, res, next) => {
 const updateComment = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId,
+        post: req.params.postId,
         _id: req.params.commentId
     };
     const updatedComment = await Comment.findOneAndUpdate(filter, req.body, { new: true });
@@ -51,7 +51,7 @@ const updateComment = async (req, res, next) => {
 const deleteComment = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId,
+        post: req.params.postId,
         _id: req.params.commentId
     };
     const deletedComment = await Comment.findOneAndDelete(filter);

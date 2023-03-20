@@ -2,7 +2,7 @@ const Review = require('../models/reviewModel');
 
 const createReview = async (req, res, next) => {
     const post_id = req.params.postId;
-    const newReview = new Review({...req.body, post_id});
+    const newReview = new Review({...req.body, post: post_id});
     await newReview.save();
     res.json({
         message: "New Review has been created",
@@ -13,9 +13,9 @@ const createReview = async (req, res, next) => {
 const getAllReviews = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId,
+        post: req.params.postId,
     };
-    const reviews = await Review.find(filter);
+    const reviews = await Review.find(filter)//.populate('Comment').populate('Review');
     res.json({
         message: reviews.length ? "Reviews have been founded" : "There are no reviews exist",
         Reviews: reviews
@@ -25,7 +25,7 @@ const getAllReviews = async (req, res, next) => {
 const getSingleReview = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId,
+        post: req.params.postId,
         _id: req.params.reviewId
     };
     const selectedReview = await Review.findOne(filter);
@@ -38,7 +38,7 @@ const getSingleReview = async (req, res, next) => {
 const updateReview = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId,
+        post: req.params.postId,
         _id: req.params.reviewId
     };
     const updatedReview = await Review.findOneAndUpdate(filter, req.body, { new: true });
@@ -51,7 +51,7 @@ const updateReview = async (req, res, next) => {
 const deleteReview = async (req, res, next) => {
     let filter = {
         // user_id: req.user._id,
-        post_id: req.params.postId,
+        post: req.params.postId,
         _id: req.params.reviewId
     };
     const deletedReview = await Review.findOneAndDelete(filter);

@@ -1,7 +1,7 @@
 const Post = require('../models/postModel');
 
 const createPost = async (req, res, next) => {
-    const newPost = new Post({...req.body});
+    const newPost = new Post({ ...req.body });
     await newPost.save();
     res.json({
         message: "New post has been created",
@@ -22,7 +22,7 @@ const getAllPosts = async (req, res, next) => {
 
 const getSinglePost = async (req, res, next) => {
     const id = req.params.id;
-    const selectedPost = await Post.findOne({_id: id});
+    const selectedPost = await Post.findOne({ _id: id });
     res.json({
         message: selectedPost ? "Post has been founded" : "Post was not found",
         Post: selectedPost

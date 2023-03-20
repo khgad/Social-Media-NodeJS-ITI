@@ -1,23 +1,29 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
+const _ = require('lodash');
 
 const reviewSchema = new Schema({
-    rate:{
+    rate: {
         type: Number,
         required: true,
-        min:1,
+        min: 1,
         max: 10
     },
-    post_id: {
+    post: {
         type: Schema.Types.ObjectId,
-        ref: 'Post',
-        required: true
+        ref: 'Post'
     },
-    // user_id: {
-    //     type: Schema.Types.ObjectId,
-    //     ref: 'User',
-    //     required: true
-    // }
+    user: {
+        type: Schema.Types.ObjectId,
+        ref: 'User'
+    }
+}, {
+    toJSON: {
+        transform: (dir, ret) => {
+            const dataToReturn = _.pick(ret, ['_id', 'user', 'rate']);
+            return dataToReturn;
+        }
+    }
 });
 
 const Review = mongoose.model('Review', reviewSchema);
