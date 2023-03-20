@@ -1,6 +1,9 @@
 const mongoose = require('mongoose');
 const { Schema } = mongoose;
 const _ = require('lodash');
+const Comment = require('../models/commentModel');
+const Review = require('../models/reviewModel');
+
 
 
 const postSchema = new Schema({
@@ -53,6 +56,15 @@ postSchema.
     pre('find', autoPopulate).
     pre('findOneAndUpdate', autoPopulate).
     pre('findOneAndDelete', autoPopulate);
+
+    
+// Middleware function to remove comments and reviews associated with deleted posts
+postSchema.pre('findOneAndDelete', async function(next) {
+  await Comment.deleteMany({ post: this._conditions._id });
+  await Review.deleteMany({ post: this._conditions._id });
+  next();
+});
+
 
 const Post = mongoose.model('Post', postSchema);
 module.exports = Post;
