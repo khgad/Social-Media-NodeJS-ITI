@@ -1,9 +1,11 @@
 const  express  = require("express");
 const app = express();
 const postRouter = require('./routes/postRoutes');
+const commentRouter = require('./routes/commentRoutes');
 
 app.use(express.json());
-app.use('/post', postRouter);
+app.use('/posts/:postId/comments', commentRouter);
+app.use('/posts', postRouter);
 
 app.get('/', (req, res)=>{
     res.send('Hello from home page');

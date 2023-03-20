@@ -2,7 +2,6 @@ const Post = require('../models/postModel');
 
 const createPost = async (req, res, next) => {
     const newPost = new Post({...req.body});
-    console.log(newPost);
     await newPost.save();
     res.json({
         message: "New post has been created",
