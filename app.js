@@ -1,12 +1,12 @@
 const express = require("express");
 const userRouter = require("./routes/userRouter");
-const authController = require("./controllers/authControler");
+const {signup,login} = require("./controllers/authControler");
 const profilePicRouter = require("./routes/profilePicRouter");
 const app = express();
 
 app.use(express.json());
-app.use("/signup", authController.signup);
-app.use("/login", authController.login);
+app.use("/signup", signup);
+app.use("/login", login);
 app.use("/user", userRouter);
 app.use("/profiePic", profilePicRouter);
 

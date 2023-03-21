@@ -7,8 +7,11 @@ const signUpSchema = Joi.object({
     isAdmin: Joi.boolean().optional()
 })
 
-
-module.exports = {signUpSchema}
+const logInSchema = Joi.object({
+    userName: Joi.string().required().messages({"any.required":"Please Enter your Name"}),
+    password: Joi.string().required().messages({"any.required":"Please Enter your password"}),
+})
+module.exports = {signUpSchema , logInSchema}
 
 
 

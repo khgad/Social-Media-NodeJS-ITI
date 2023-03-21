@@ -4,7 +4,7 @@ const User = require("./../models/userModel");
 @desc       Get all users
 @route      /user/
 @method     Get
-@access     protected (only logged in users)
+@access     protected (only Admin)
 ---------------------------------------------------- */
 
 exports.getUsers = async (req, res) => {
@@ -26,7 +26,7 @@ exports.getUsers = async (req, res) => {
 @desc       Get user by id
 @route      /user/:id
 @method     Get
-@access     protected (only logged in users)
+@access     protected (only userHimself or Admin)
 ---------------------------------------------------- */
 exports.getUserById = async (req, res) => {
   const Data = await User.findById(req.params.id)
@@ -42,7 +42,7 @@ exports.getUserById = async (req, res) => {
 @desc       Update user by id
 @route      /user/:id
 @method     PATCH
-@access     protected (only logged in users)
+@access     protected (only userHimself or Admin)
 ---------------------------------------------------- */
 exports.updateUserById = async (req, res) => {
   const updateUser = await User.findByIdAndUpdate(req.params.id, req.body)
@@ -62,7 +62,7 @@ exports.updateUserById = async (req, res) => {
 @desc       Delete user by id
 @route      /user/:id
 @method     DELETE
-@access     protected (only logged in users)
+@access     protected (only userHimself or Admin)
 ---------------------------------------------------- */
 exports.deleteUserById = async (req, res) => {
   const deleteUser = await User.findByIdAndDelete(req.params.id);
