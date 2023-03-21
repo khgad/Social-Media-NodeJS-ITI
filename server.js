@@ -1,8 +1,8 @@
 require('express-async-errors');
-
+require('./db');
 const app = require('./app');
-const { port } = require('./config');
+const {port} = require('./config');
 
-app.listen(port, ()=>{
+app.listen(port, () => {
     console.log(`App running on port ${port}`)
 })
