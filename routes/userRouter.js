@@ -1,12 +1,11 @@
 const express = require("express");
 const userController = require("./../controllers/userController");
-const {verifyToken, protectUser} = require("./../controllers/authControler");
-
+const authControler= require("./../controllers/authControler");
 const router = express.Router();
 const CheckObjectId = require("./../helpers/CheckValidObjectId");
 
 // protect all other routes
-router.use("/",verifyToken,protectUser);
+router.use("/",authControler.verifyToken,authControler.protectUser);
 
 router.get("/",userController.getUsers);
 

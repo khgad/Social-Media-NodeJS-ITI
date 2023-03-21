@@ -16,7 +16,7 @@ require("dotenv").config();
 @method     POST
 @access     un-protected
 ---------------------------------------------------- */
-signup = async (req, res) => {
+exports.signup = async (req, res) => {
   try {
     // create a new user
     const user = await User.create(req.body);
@@ -42,7 +42,7 @@ signup = async (req, res) => {
 @method     POST
 @access     un-protected
 ---------------------------------------------------- */
-login = async (req, res) => {
+exports.login = async (req, res) => {
   // 1- check username or password exists in the request itself
   const valid = await logInSchema.validateAsync(req.body);
   const { userName, password } = req.body;
@@ -67,40 +67,7 @@ login = async (req, res) => {
   });
 };
 
-// exports.verifyToken = async (req, res, next) => {
-//   // 1- get token and check it exists
-//   let token;
-//   if (req.headers.authorization) {
-//     token = req.headers.authorization;
-//   } else {
-//     return res.status(500).json({
-//       status: "Error",
-//       message: "you are not allowed to access this page",
-//     });
-//   }
-//   // 2- validate token
-//   try {
-//     const payload = jwt.verify(token, process.env.JWT_SECRET);
-//     req.user = payload;
-//     next();
-//   } catch {
-//     return res.status(500).json({
-//       status: "Error",
-//       message: "invalid Signature",
-//     });
-//   }
-// };
-
-// exports.protectUser = async (req, res, next) => {
-//   if (req.user.isAdmin || req.user.id === req.params.id) {
-//     next();
-//   } else {
-//     return res
-//       .status(403)
-//       .json({ message: "Not allowed,Only Admin or User Himself" });
-//   }
-// };
-function verifyToken (req, res, next) {
+exports.verifyToken = async (req, res, next) => {
   // 1- get token and check it exists
   let token;
   if (req.headers.authorization) {
@@ -124,16 +91,13 @@ function verifyToken (req, res, next) {
   }
 };
 
-function protectUser(req, res, next) {
-  verifyToken(req, res, () => {
-    if (req.user.isAdmin || req.user.id == req.params.id) {
-      next();
-    } else {
-      return res
-        .status(403)
-        .json({ message: "Not allowed,Only Admin or User Himself" });
-    }
-  });
-}
-
-module.exports = {verifyToken, protectUser,signup,login};
+exports.protectUser = async (req, res, next) => {
+  console.log(req.user.id,req.user.isAdmin);
+  if (req.user.isAdmin || (req.user.id === req.params.id)) {
+    next();
+  } else {
+    return res
+      .status(403)
+      .json({ message: "Not allowed,Only Admin or User Himself" });
+  }
+};
