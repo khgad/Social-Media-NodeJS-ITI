@@ -30,10 +30,9 @@ exports.profilePicUploadCtrl = async (req, res) => {
 
   //  4- Get user from DB
   const user = await User.findById(req.user.id);
-console.log(user.userName);
   // 5- delete old profile photo from cloudinary
-  if (user.profilePhoto.publicId !== null) {
-    await cloudinaryRemoveImg(user.profilePhoto.publicId);
+  if (user.profilePicture.publicId !== null) {
+    await cloudinaryRemoveImg(user.profilePicture.publicId);
   }
 
   // 6- change profile photo in DB
@@ -41,7 +40,7 @@ console.log(user.userName);
     url: result.secure_url,
     publicId: result.public_id
   };
-  
+
   await user.save();
 
   // 7- send response to client
@@ -51,5 +50,5 @@ console.log(user.userName);
   });
 
   // 8- remove image from server
-  fs.unlink(imagePath);
+  fs.unlinkSync(imagePath);
 };
