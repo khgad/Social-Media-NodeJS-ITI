@@ -4,20 +4,20 @@ const authControler= require("./../controllers/authControler");
 const router = express.Router();
 const CheckObjectId = require("./../helpers/CheckValidObjectId");
 
-// protect all other routes
-router.use("/",authControler.verifyToken,authControler.protectUser);
 
-router.get("/",userController.getUsers);
+// protect all other routes
+router.get("/",authControler.verifyToken,authControler.protectUser,userController.getUsers);
 
 /* single : upload one photo only
 image : file name in request must be image */
 
-router.use("/:id",CheckObjectId);
+router.use("/:id",CheckObjectId,authControler.verifyToken,authControler.protectUser);
 
 router
   .route("/:id")
   .get(userController.getUserById)
   .patch(userController.updateUserById)
   .delete(userController.deleteUserById);
+
 
 module.exports = router;

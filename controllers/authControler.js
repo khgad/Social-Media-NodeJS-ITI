@@ -2,13 +2,9 @@ const User = require("./../models/userModel");
 const jwt = require("jsonwebtoken");
 const bcrypt = require("bcryptjs");
 const { signUpSchema, logInSchema } = require("./../helpers/userValidator");
-require("dotenv").config();
+const CustomError = require('./../helpers/customError');
 
-// const signToken = function() {
-//   return jwt.sign({ id:this._id ,isAdmin:this.isAdmin}, process.env.JWT_SECRET, {
-//     expiresIn: "90d",
-//   });
-// };
+require("dotenv").config();
 
 /* ----------------------------------------------------
 @desc       Add new user
@@ -17,23 +13,17 @@ require("dotenv").config();
 @access     un-protected
 ---------------------------------------------------- */
 exports.signup = async (req, res) => {
-  try {
-    // create a new user
-    const user = await User.create(req.body);
-    const valid = await signUpSchema.validateAsync(req.body);
+  // create a new user
+  const user = await User.create(req.body);
+  const valid = await signUpSchema.validateAsync(req.body);
 
-    res.status(201).json({
-      status: "success",
-      data: {
-        name: user.userName,
-        email: user.email,
-      },
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: err.message,
-    });
-  }
+  res.status(201).json({
+    status: "success",
+    data: {
+      name: user.userName,
+      email: user.email,
+    },
+  });
 };
 
 /* ----------------------------------------------------
@@ -52,10 +42,7 @@ exports.login = async (req, res) => {
 
   // comparing input password with hashed password inside DB
   if (!user || !(await bcrypt.compare(req.body.password, user.password))) {
-    return res.status(400).json({
-      status: "error",
-      message: "Check your credentials again",
-    });
+    throw new CustomError("Check your credentials again", 400);
   }
   // 3 - if everything is correct
   // create jwt token
@@ -73,31 +60,22 @@ exports.verifyToken = async (req, res, next) => {
   if (req.headers.authorization) {
     token = req.headers.authorization;
   } else {
-    return res.status(500).json({
-      status: "Error",
-      message: "you are not allowed to access this page",
-    });
+    throw new CustomError("you are not allowed to access this page", 500);
   }
   // 2- validate token
-  try {
-    const payload = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = payload;
-    next();
-  } catch {
-    return res.status(500).json({
-      status: "Error",
-      message: "invalid Signature",
-    });
-  }
+
+  const payload = jwt.verify(token, process.env.JWT_SECRET);
+  req.user = payload;
+  next();
+
+  throw new CustomError("invalid Signature", 500);
 };
 
 exports.protectUser = async (req, res, next) => {
-  console.log(req.user.id,req.user.isAdmin);
-  if (req.user.isAdmin || (req.user.id === req.params.id)) {
+  console.log(req.user.id, req.user.isAdmin, req.params.id);
+  if (req.user.isAdmin || req.user.id === req.params.id) {
     next();
   } else {
-    return res
-      .status(403)
-      .json({ message: "Not allowed,Only Admin or User Himself" });
+    throw new CustomError("Not allowed,Only Admin or User Himself", 500);
   }
 };

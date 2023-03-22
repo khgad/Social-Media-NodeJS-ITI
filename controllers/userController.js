@@ -8,18 +8,12 @@ const User = require("./../models/userModel");
 ---------------------------------------------------- */
 
 exports.getUsers = async (req, res) => {
-  try {
+
     const allUsers = await User.find().select("-password").select("-__v");
     res.status(200).json({
       status: "Success",
       data: allUsers,
     });
-  } catch (err) {
-    res.status(500).json({
-      status: "Error",
-      message: err.message,
-    });
-  }
 };
 
 /* ----------------------------------------------------
