@@ -68,7 +68,7 @@ exports.verifyToken = async (req, res, next) => {
   req.user = payload;
   next();
 
-  throw new CustomError("invalid Signature", 500);
+  // throw new CustomError("invalid Signature", 500);
 };
 
 exports.protectUser = async (req, res, next) => {

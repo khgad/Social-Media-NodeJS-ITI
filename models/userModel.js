@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
+// const Post = require('../models/postModel');
 
 const userSchema = new Schema(
   {
@@ -48,6 +49,20 @@ userSchema.methods.generateToken = function () {
   return jwt.sign({ id:this._id ,isAdmin:this.isAdmin}, process.env.JWT_SECRET, {
     expiresIn: "90d",
 })}
+
+
+// Specifying a virtual with a `ref` property to enable virtual population
+userSchema.virtual('posts', {
+  ref: 'Post',
+  localField: '_id',
+  foreignField: 'user'
+});
+
+// delete posts that relate to the deleted user
+// userSchema.pre('findByIdAndDelete', async function(req, res, next){
+//   await Post.deleteMany({ user : this._conditions._id});
+//   next();
+// })
 
 
 const User = mongoose.model("User", userSchema);
