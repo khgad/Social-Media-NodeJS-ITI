@@ -2,11 +2,11 @@ const mongoose = require("mongoose");
 const { Schema } = require("mongoose");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-// const Post = require('../models/postModel');
+const Post = require('../models/postModel');
 
 const userSchema = new Schema(
   {
-    userName: {
+    userName: {     // ************** change it to just username   **************  
       type: String,
       required: true,
     },
@@ -32,6 +32,12 @@ const userSchema = new Schema(
   },
   {
     timestamps: true,
+    toJSON: {
+      virtuals: true,
+    },
+    toObject: {
+      virtuals: true,
+    },
   }
 );
 
@@ -50,19 +56,29 @@ userSchema.methods.generateToken = function () {
     expiresIn: "90d",
 })}
 
-
 // Specifying a virtual with a `ref` property to enable virtual population
 userSchema.virtual('posts', {
   ref: 'Post',
   localField: '_id',
-  foreignField: 'user'
+  foreignField: 'author'
 });
 
+// Query Hook to autopopulate
+const autoPopulate = function (next) {
+  this.populate('posts');
+  next();
+};
+userSchema.
+  pre('findById', autoPopulate).
+  pre('find', autoPopulate).
+  pre('findByIdAndUpdate', autoPopulate).
+  pre('findByIdAndDelete', autoPopulate);
+
 // delete posts that relate to the deleted user
-// userSchema.pre('findByIdAndDelete', async function(req, res, next){
-//   await Post.deleteMany({ user : this._conditions._id});
-//   next();
-// })
+userSchema.pre('findByIdAndDelete', async function(req, res, next){
+  await Post.deleteMany({ user : this._conditions._id});
+  next();
+})
 
 
 const User = mongoose.model("User", userSchema);
