@@ -23,7 +23,7 @@ exports.getUsers = async (req, res) => {
 @access     protected (only userHimself or Admin)
 ---------------------------------------------------- */
 exports.getUserById = async (req, res) => {
-  const Data = await User.findById(req.params.id)
+  const Data = await User.find({_id: req.params.id}) // Khaled : replace findById with find to make populate work
     .select("-password")
     .select("-__v");
   if (!Data) {
@@ -39,7 +39,7 @@ exports.getUserById = async (req, res) => {
 @access     protected (only userHimself or Admin)
 ---------------------------------------------------- */
 exports.updateUserById = async (req, res) => {
-  const updateUser = await User.findByIdAndUpdate(req.params.id, req.body)
+  const updateUser = await User.findByIdAndUpdate(req.params.id, req.body, { new: true })
     .select("-password")
     .select("-__v");
   if (!updateUser) {
@@ -59,8 +59,8 @@ exports.updateUserById = async (req, res) => {
 @access     protected (only userHimself or Admin)
 ---------------------------------------------------- */
 exports.deleteUserById = async (req, res) => {
-  const deleteUser = await User.findByIdAndDelete(req.params.id);
-  if (!updateUser) {
+  const deleteUser = await User.findOneAndDelete({_id: req.params.id});
+  if (!deleteUser) {
     return res.status(404).json({ message: "User not found" });
   }
   res.status(200).json({

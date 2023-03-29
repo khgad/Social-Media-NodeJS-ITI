@@ -47,7 +47,7 @@ postSchema.virtual('reviews', {
 
 // Query Hook to autopopulate
 const autoPopulate = function (next) {
-    this.populate('comments').populate('reviews');
+    this.populate('comments').populate('reviews')//.populate({path:'author', select:'userName'});
     next();
 };
 
@@ -60,15 +60,21 @@ postSchema.
     
     
 // Middleware function to remove comments and reviews associated with deleted posts
-const deleteChildren = async function(next) {
-    await Comment.deleteMany({ post: this._conditions._id });
-    await Review.deleteMany({ post: this._conditions._id });
-    next();
-  }
+// const deleteChildren = 
 
 postSchema.
-    pre('findOneAndDelete', deleteChildren).
-    pre('deleteMany', deleteChildren);
+    pre('findOneAndDelete', async function(next) {
+        await Comment.deleteMany({ post: this._conditions._id });
+        await Review.deleteMany({ post: this._conditions._id });
+        next();
+      }).
+    pre('deleteMany', async function(next) {
+        const posts = await this.model.find({author: this._conditions.author});
+        const postIds = posts.map(post => post._id);
+        await Comment.deleteMany({ post: { $in: postIds} });
+        await Review.deleteMany({ post: { $in: postIds} });
+        next();
+      });
 
 
 const Post = mongoose.model('Post', postSchema);

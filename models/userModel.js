@@ -65,20 +65,20 @@ userSchema.virtual('posts', {
 
 // Query Hook to autopopulate
 const autoPopulate = function (next) {
-  this.populate('posts');
+  this.populate({path:'posts', select:'content'});
   next();
 };
 userSchema.
-  pre('findById', autoPopulate).
-  pre('find', autoPopulate).
-  pre('findByIdAndUpdate', autoPopulate).
-  pre('findByIdAndDelete', autoPopulate);
+    pre('find', autoPopulate).
+    pre('findByIdAndUpdate', autoPopulate).
+    pre('findOneAndDelete', autoPopulate);
 
 // delete posts that relate to the deleted user
-userSchema.pre('findByIdAndDelete', async function(req, res, next){
-  await Post.deleteMany({ user : this._conditions._id});
+userSchema.pre('findOneAndDelete', async function(next){
+  console.log("author id from pre function : ", this._conditions._id);
+  await Post.deleteMany({ author : this._conditions._id});
   next();
-})
+});
 
 
 const User = mongoose.model("User", userSchema);

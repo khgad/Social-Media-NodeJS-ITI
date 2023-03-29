@@ -1,8 +1,9 @@
 const Review = require('../models/reviewModel');
 
 const createReview = async (req, res, next) => {
-    const post_id = req.params.postId;
-    const newReview = new Review({...req.body, post: post_id});
+    const post = req.params.postId;
+    const author = req.user.id;
+    const newReview = new Review({...req.body, post, author});
     await newReview.save();
     res.json({
         message: "New Review has been created",

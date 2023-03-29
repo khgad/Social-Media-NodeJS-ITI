@@ -1,7 +1,16 @@
 const Post = require('../models/postModel');
 
+
+/* ----------------------------------------------------
+@desc       create new post
+@route      /posts
+@method     POST
+@access     protected (only logged in users)
+---------------------------------------------------- */
+
 const createPost = async (req, res, next) => {
-    const newPost = new Post({ ...req.body });
+    const author = req.user.id
+    const newPost = new Post({ ...req.body , author});
     await newPost.save();
     res.json({
         message: "New post has been created",
@@ -9,16 +18,28 @@ const createPost = async (req, res, next) => {
     });
 };
 
+/* ----------------------------------------------------
+@desc       Get all posts
+@route      /posts
+@method     GET
+@access     protected (only logged in users)
+---------------------------------------------------- */
+
 const getAllPosts = async (req, res, next) => {
-    // let filter = {
-    //     ...req.query
-    // }
     const posts = await Post.find();
     res.json({
         message: posts.length ? "Posts have been founded" : "There are no posts exist",
         Post: posts
     });
 };
+
+
+/* ----------------------------------------------------
+@desc       Get single post by id
+@route      /posts/:id
+@method     GET
+@access     protected (only logged in users)
+---------------------------------------------------- */
 
 const getSinglePost = async (req, res, next) => {
     const id = req.params.id;
@@ -29,6 +50,14 @@ const getSinglePost = async (req, res, next) => {
     });
 };
 
+
+/* ----------------------------------------------------
+@desc       updata post
+@route      /posts/:id
+@method     PATCH
+@access     protected (only logged in user and owner of the post)
+---------------------------------------------------- */
+
 const updatePost = async (req, res, next) => {
     const id = req.params.id;
     const updatedPost = await Post.findOneAndUpdate({ _id: id }, req.body, { new: true });
@@ -37,6 +66,14 @@ const updatePost = async (req, res, next) => {
         Post: updatedPost
     });
 }
+
+
+/* ----------------------------------------------------
+@desc       delete post
+@route      /posts/:id
+@method     DELETE
+@access     protected (only logged in user and owner of the post)
+---------------------------------------------------- */
 
 const deletePost = async (req, res, next) => {
     const id = req.params.id;

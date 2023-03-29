@@ -1,8 +1,9 @@
 const Comment = require('../models/commentModel');
 
 const createComment = async (req, res, next) => {
-    const post_id = req.params.postId;
-    const newComment = new Comment({...req.body, post:post_id});
+    const post = req.params.postId;
+    const author = req.user.id;
+    const newComment = new Comment({...req.body, post, author});
     await newComment.save();
     res.json({
         message: "New Comment has been created",
